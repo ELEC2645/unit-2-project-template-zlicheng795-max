@@ -1,28 +1,53 @@
-// ELEC2645 Unit 2 Project Template
-// Command Line Application Menu Handling Code
+// ELEC2645 Unit 2 Project: Scientific Calculator
+// Command Line Application with Expression Evaluation and Scientific Functions
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <math.h>
 #include "funcs.h"
 
-/* Prototypes mirroring the C++ version */
-static void main_menu(void);            /* runs in the main loop */
-static void print_main_menu(void);      /* output the main menu description */
-static int  get_user_input(void);       /* get a valid integer menu choice */
-static void select_menu_item(int input);/* run code based on user's choice */
-static void go_back_to_main(void);      /* wait for 'b'/'B' to continue */
-static int  is_integer(const char *s);  /* validate integer string */
+/* External calculator state */
+extern CalculatorState calc_state;
+
+/* Prototypes */
+static void main_menu(void);
+static void print_main_menu(void);
+static int  get_user_input(void);
+static void select_menu_item(int input);
+static void go_back_to_main(void);
+static int  is_integer(const char *s);
 
 int main(void)
 {
-    /* this will run forever until we call exit(0) in select_menu_item() */
+    /* Initialize calculator state */
+    init_calculator_state(&calc_state);
+    
+    /* Display welcome banner */
+    printf("\n");
+    printf("╔══════════════════════════════════════════════════════════════╗\n");
+    printf("║                                                              ║\n");
+    printf("║             SCIENTIFIC CALCULATOR v1.0                       ║\n");
+    printf("║                                                              ║\n");
+    printf("║              ELEC2645 Unit 2 Individual Project              ║\n");
+    printf("║                                                              ║\n");
+    printf("╚══════════════════════════════════════════════════════════════╝\n");
+    printf("\n");
+    printf("Welcome to the Scientific Calculator!\n");
+    printf("\n");
+    printf("Features:\n");
+    printf("  • Expression Evaluation (with operator precedence)\n");
+    printf("  • Scientific Functions (trig, log, exp, roots)\n");
+    printf("  • Unit Conversions (temperature, length, weight, angle)\n");
+    printf("  • Programmer Mode (base conversion, bitwise operations)\n");
+    printf("  • Memory & History Support\n");
+    printf("\n");
+    
+    /* Main application loop */
     for(;;) {
         main_menu();
     }
-    /* not reached */
+    
     return 0;
 }
 
@@ -45,12 +70,11 @@ static int get_user_input(void)
     do {
         printf("\nSelect item: ");
         if (!fgets(buf, sizeof(buf), stdin)) {
-            /* EOF or error; bail out gracefully */
             puts("\nInput error. Exiting.");
             exit(1);
         }
 
-        // strip trailing newline
+        /* Strip trailing newline */
         buf[strcspn(buf, "\r\n")] = '\0';
 
         if (!is_integer(buf)) {
@@ -90,47 +114,73 @@ static void select_menu_item(int input)
             go_back_to_main();
             break;
         default:
-            printf("Bye!\n");
+            printf("\n");
+            printf("╔══════════════════════════════════════════════════════════════╗\n");
+            printf("║                                                              ║\n");
+            printf("║              Thank you for using the                         ║\n");
+            printf("║                Scientific Calculator!                        ║\n");
+            printf("║                                                              ║\n");
+            printf("╚══════════════════════════════════════════════════════════════╝\n");
+            printf("\n");
             exit(0);
     }
 }
 
 static void print_main_menu(void)
 {
-    printf("\n----------- Main menu -----------\n");
-    printf("\n"
-           "\t\t\t\t\t\t\n"
-           "\t1. Menu item 1\t\t\n"
-           "\t2. Menu item 2\t\t\n"
-           "\t3. Menu item 3\t\t\n"
-           "\t4. Menu item 4\t\t\n"
-           "\t5. Exit\t\t\t\t\n"
-           "\t\t\t\t\t\t\n");
-    printf("---------------------------------------------\n");
+    printf("\n");
+    printf("╔══════════════════════════════════════════════════════════════╗\n");
+    printf("║                         MAIN MENU                            ║\n");
+    printf("╠══════════════════════════════════════════════════════════════╣\n");
+    printf("║                                                              ║\n");
+    printf("║  1. Basic Calculator                                         ║\n");
+    printf("║     └─ Expression evaluation with +, -, *, /, ^, %%         ║\n");
+    printf("║     └─ Memory, History, and 'ans' support                   ║\n");
+    printf("║                                                              ║\n");
+    printf("║  2. Scientific Functions                                     ║\n");
+    printf("║     └─ Trigonometry (sin, cos, tan, arc functions)          ║\n");
+    printf("║     └─ Logarithms, Exponentials, Roots, Factorial           ║\n");
+    printf("║                                                              ║\n");
+    printf("║  3. Unit Converter                                           ║\n");
+    printf("║     └─ Temperature, Length, Weight, Angle                   ║\n");
+    printf("║                                                              ║\n");
+    printf("║  4. Programmer Mode                                          ║\n");
+    printf("║     └─ Base conversion (Binary, Octal, Hex)                 ║\n");
+    printf("║     └─ Bitwise operations (AND, OR, XOR, NOT, Shifts)       ║\n");
+    printf("║                                                              ║\n");
+    printf("║  5. Exit Application                                         ║\n");
+    printf("║                                                              ║\n");
+    printf("╚══════════════════════════════════════════════════════════════╝\n");
+    
+    /* Display current state */
+    printf("\nCurrent Settings:\n");
+    printf("  Angle Mode: %s\n", calc_state.angle_mode == RADIANS ? "RADIANS" : "DEGREES");
+    printf("  Memory: %.10g\n", calc_state.memory);
+    printf("  Last Result: %.10g\n", calc_state.last_result);
 }
 
 static void go_back_to_main(void)
 {
     char buf[64];
     do {
-        printf("\nEnter 'b' or 'B' to go back to main menu: ");
+        printf("\nPress 'b' or 'B' to go back to main menu: ");
         if (!fgets(buf, sizeof(buf), stdin)) {
             puts("\nInput error. Exiting.");
             exit(1);
         }
-        buf[strcspn(buf, "\r\n")] = '\0'; /* strip newline */
+        buf[strcspn(buf, "\r\n")] = '\0';
     } while (!(buf[0] == 'b' || buf[0] == 'B') || buf[1] != '\0');
 }
 
-/* Return 1 if s is an optional [+/-] followed by one-or-more digits, else 0. */
+/* Return 1 if s is an optional [+/-] followed by one-or-more digits, else 0 */
 static int is_integer(const char *s)
 {
     if (!s || !*s) return 0;
 
-    /* optional sign */
+    /* Optional sign */
     if (*s == '+' || *s == '-') s++;
 
-    /* must have at least one digit */
+    /* Must have at least one digit */
     if (!isdigit((unsigned char)*s)) return 0;
 
     while (*s) {
