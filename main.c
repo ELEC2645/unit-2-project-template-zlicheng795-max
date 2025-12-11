@@ -1,4 +1,4 @@
-/ ELEC2645 Unit 2 Project Template
+// ELEC2645 Unit 2 Project Template
 // Command Line Application Menu Handling Code
 
 #include <stdio.h>
