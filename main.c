@@ -100,10 +100,10 @@ static void print_main_menu(void)
     printf("\n----------- Main menu -----------\n");
     printf("\n"
            "\t\t\t\t\t\t\n"
-           "\t1. Menu item 1\t\t\n"
-           "\t2. Menu item 2\t\t\n"
-           "\t3. Menu item 3\t\t\n"
-           "\t4. Menu item 4\t\t\n"
+           "\t1. Decode 4-band resistor (colour → value)\t\t\n"
+           "\t2. Decode 5-band resistor (colour → value)\t\t\n"
+           "\t3. Decode 6-band resistor (colour → value + tempco)\t\t\n"
+           "\t4. Encode resistance value into colour bands\t\t\n"
            "\t5. Exit\t\t\t\t\n"
            "\t\t\t\t\t\t\n");
     printf("---------------------------------------------\n");
